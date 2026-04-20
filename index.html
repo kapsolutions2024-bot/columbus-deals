@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Columbus Investment Deals</title>
+  <style>
+    :root {
+      --bg: #f7f7fb;
+      --card: #ffffff;
+      --text: #171717;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #7c3aed;
+      --accent-soft: #f3e8ff;
+      --good: #166534;
+      --good-soft: #dcfce7;
+      --hot: #b91c1c;
+      --hot-soft: #fee2e2;
+      --shadow: 0 10px 30px rgba(0,0,0,.06);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #111827 0%, #312e81 100%);
+      color: white;
+      border-radius: 30px;
+      padding: 34px 26px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,.14);
+      padding: 8px 12px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.05;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 720px;
+      color: rgba(255,255,255,.88);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 22px 0;
+    }
+
+    .stat {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr;
+      gap: 12px;
+      margin: 10px 0 22px;
+    }
+
+    .control {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .control label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .control input,
+    .control select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 14px;
+      background: white;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .pill {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .pill.category {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .pill.hot {
+      background: var(--hot-soft);
+      color: var(--hot);
+    }
+
+    .title {
+      font-size: 23px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin: 0 0 6px;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .price {
+      font-size: 30px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .metric {
+      background: #fafafa;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .detail {
+      font-size: 12px;
+      color: #374151;
+      background: #f9fafb;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 10px;
+    }
+
+    .note {
+      background: #f9fafb;
+      border-left: 4px solid var(--accent);
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: #374151;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .empty,
+    .loading,
+    .error {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .topbar,
+      .controls,
+      .grid,
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .card-top {
+        flex-direction: column;
+      }
+
+      .price {
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">Updated weekly</div>
+      <h1>Columbus Investment Deals</h1>
+      <p>Fresh Columbus-area investment opportunities pulled into one simple dashboard. Browse by category, sort by best return, and quickly spot strong rental and flip plays.</p>
+    </section>
+
+    <section class="topbar" id="stats"></section>
+
+    <section class="controls">
+      <div class="control">
+        <label for="search">Search</label>
+        <input id="search" type="text" placeholder="Neighborhood, address, title..." />
+      </div>
+      <div class="control">
+        <label for="category">Category</label>
+        <select id="category">
+          <option value="all">All categories</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="sort">Sort by</label>
+        <select id="sort">
+          <option value="hot">Hot first</option>
+          <option value="cashflow">Monthly cash flow</option>
+          <option value="roi">Cash-on-cash ROI</option>
+          <option value="price-low">Price: low to high</option>
+          <option value="price-high">Price: high to low</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="maxPrice">Max price</label>
+        <input id="maxPrice" type="number" placeholder="Example: 300000" />
+      </div>
+    </section>
+
+    <div id="app" class="loading">Loading your live Columbus deals...</div>
+    <div class="footer-note">Powered by your live Render API.</div>
+  </div>
+
+  <script>
+    const API_URL = "https://columbus-deals.onrender.com/api/deals";
+    let allDeals = [];
+    let payload = null;
+
+    const app = document.getElementById('app');
+    const stats = document.getElementById('stats');
+    const categoryEl = document.getElementById('category');
+    const sortEl = document.getElementById('sort');
+    const maxPriceEl = document.getElementById('maxPrice');
+    const searchEl = document.getElementById('search');
+
+    function money(value) {
+      if (value === null || value === undefined || value === '') return '—';
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+    }
+
+    function percent(value) {
+      if (value === null || value === undefined || value === '') return '—';
+      return `${value}%`;
+    }
+
+    function renderStats(data) {
+      const m = data.metrics || {};
+      stats.innerHTML = `
+        <div class="stat"><div class="stat-label">Week</div><div class="stat-value" style="font-size:18px;">${data.weekLabel || 'Current week'}</div></div>
+        <div class="stat"><div class="stat-label">Avg Monthly Cash Flow</div><div class="stat-value">${money(m.avgMonthlyCashFlow)}</div></div>
+        <div class="stat"><div class="stat-label">Avg Cap Rate</div><div class="stat-value">${percent(m.avgCapRate)}</div></div>
+        <div class="stat"><div class="stat-label">Deals Loaded</div><div class="stat-value">${(data.deals || []).length}</div></div>
+      `;
+    }
+
+    function populateCategories(deals) {
+      const categories = [...new Set(deals.map(d => d.category).filter(Boolean))];
+      categoryEl.innerHTML = '<option value="all">All categories</option>' +
+        categories.map(c => `<option value="${c}">${c}</option>`).join('');
+    }
+
+    function getFilteredDeals() {
+      const search = searchEl.value.trim().toLowerCase();
+      const category = categoryEl.value;
+      const sort = sortEl.value;
+      const maxPrice = Number(maxPriceEl.value || 0);
+
+      let deals = [...allDeals].filter(deal => {
+        const matchesCategory = category === 'all' || deal.category === category;
+        const matchesPrice = !maxPrice || (deal.price || 0) <= maxPrice;
+        const haystack = [deal.title, deal.address, deal.neighborhood, deal.note, deal.category].join(' ').toLowerCase();
+        const matchesSearch = !search || haystack.includes(search);
+        return matchesCategory && matchesPrice && matchesSearch;
+      });
+
+      deals.sort((a, b) => {
+        if (sort === 'cashflow') return (b.monthlyCashFlow || -999999) - (a.monthlyCashFlow || -999999);
+        if (sort === 'roi') return (b.cashOnCashROI || -999999) - (a.cashOnCashROI || -999999);
+        if (sort === 'price-low') return (a.price || 0) - (b.price || 0);
+        if (sort === 'price-high') return (b.price || 0) - (a.price || 0);
+        return (b.hot === true) - (a.hot === true);
+      });
+
+      return deals;
+    }
+
+    function renderDeals() {
+      const deals = getFilteredDeals();
+
+      if (!deals.length) {
+        app.className = 'empty';
+        app.innerHTML = 'No deals match those filters yet. Try widening your price range or switching categories.';
+        return;
+      }
+
+      app.className = 'grid';
+      app.innerHTML = deals.map(deal => {
+        const details = Object.entries(deal.details || {}).map(([k, v]) => `<span class="detail">${k}: ${v}</span>`).join('');
+        return `
+          <article class="card">
+            <div class="pill-row">
+              <span class="pill category">${deal.category || 'Deal'}</span>
+              ${deal.hot ? '<span class="pill hot">Hot</span>' : ''}
+            </div>
+            <div class="card-top">
+              <div>
+                <h2 class="title">${deal.title || 'Untitled Deal'}</h2>
+                <div class="sub">${deal.address || ''}${deal.neighborhood ? ` • ${deal.neighborhood}` : ''}</div>
+              </div>
+              <div class="price">${money(deal.price)}</div>
+            </div>
+            <div class="metrics">
+              <div class="metric"><div class="metric-label">Monthly Cash Flow</div><div class="metric-value">${money(deal.monthlyCashFlow)}</div></div>
+              <div class="metric"><div class="metric-label">Cap Rate</div><div class="metric-value">${percent(deal.capRate)}</div></div>
+              <div class="metric"><div class="metric-label">Cash-on-Cash ROI</div><div class="metric-value">${percent(deal.cashOnCashROI)}</div></div>
+            </div>
+            <div class="details">${details}</div>
+            <div class="note">${deal.note || 'No additional notes.'}</div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    async function init() {
+      try {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error('Could not load deals');
+        payload = await res.json();
+        allDeals = payload.deals || [];
+        renderStats(payload);
+        populateCategories(allDeals);
+        renderDeals();
+      } catch (err) {
+        app.className = 'error';
+        app.innerHTML = 'Your deals feed loaded incorrectly. Double-check the Render API URL and try again.';
+      }
+    }
+
+    [categoryEl, sortEl, maxPriceEl, searchEl].forEach(el => {
+      el.addEventListener('input', renderDeals);
+      el.addEventListener('change', renderDeals);
+    });
+
+    init();
+  </script>
+</body>
+</html>
