@@ -13,8 +13,6 @@
       --line: #e5e7eb;
       --accent: #7c3aed;
       --accent-soft: #f3e8ff;
-      --good: #166534;
-      --good-soft: #dcfce7;
       --hot: #b91c1c;
       --hot-soft: #fee2e2;
       --shadow: 0 10px 30px rgba(0,0,0,.06);
@@ -22,6 +20,7 @@
     }
 
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -33,6 +32,47 @@
       max-width: 1180px;
       margin: 0 auto;
       padding: 28px 18px 60px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .brandbar {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 16px 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .brand-name {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .brand-sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .brand-contact {
+      font-size: 14px;
+      line-height: 1.6;
+      text-align: right;
+    }
+
+    .brand-contact a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
     }
 
     .hero {
@@ -119,7 +159,8 @@
     }
 
     .control input,
-    .control select {
+    .control select,
+    .lead-form input {
       width: 100%;
       border: 1px solid var(--line);
       border-radius: 12px;
@@ -264,6 +305,66 @@
       text-align: center;
     }
 
+    .gate-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.66);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 1000;
+    }
+
+    .gate-card {
+      width: 100%;
+      max-width: 520px;
+      background: white;
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.18);
+    }
+
+    .gate-badge {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+
+    .gate-card h2 {
+      margin: 0 0 10px;
+      font-size: 30px;
+      line-height: 1.1;
+    }
+
+    .gate-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .lead-form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .lead-form button,
+    .wake-btn {
+      border: none;
+      background: linear-gradient(135deg, #111827 0%, #312e81 100%);
+      color: white;
+      padding: 13px 16px;
+      border-radius: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
     @media (max-width: 900px) {
       .topbar,
       .controls,
@@ -272,18 +373,47 @@
         grid-template-columns: 1fr;
       }
 
-      .card-top {
+      .card-top,
+      .brandbar {
         flex-direction: column;
+        align-items: flex-start;
       }
 
-      .price {
+      .price,
+      .brand-contact {
         white-space: normal;
+        text-align: left;
       }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div id="gate" class="gate-overlay">
+    <div class="gate-card">
+      <div class="gate-badge">Free investor tool</div>
+      <h2>Unlock this week’s Columbus deals</h2>
+      <p>Enter your name, phone number, and email to access the live investment dashboard.</p>
+      <form class="lead-form" id="leadForm">
+        <input id="leadName" type="text" placeholder="Full name" required />
+        <input id="leadPhone" type="tel" placeholder="Phone number" required />
+        <input id="leadEmail" type="email" placeholder="Email address" required />
+        <button type="submit">View deals</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="wrap hidden" id="siteWrap">
+    <section class="brandbar">
+      <div>
+        <div class="brand-name">Amanda Pflug | Howard Hanna</div>
+        <div class="brand-sub">Central Ohio real estate, investor support, staging, and STR strategy</div>
+      </div>
+      <div class="brand-contact">
+        <div><strong>Call/Text:</strong> <a href="tel:6145840268">614-584-0268</a></div>
+        <div><strong>Email:</strong> <a href="mailto:amandapflug@howardhanna.com">amandapflug@howardhanna.com</a></div>
+      </div>
+    </section>
+
     <section class="hero">
       <div class="eyebrow">Updated weekly</div>
       <h1>Columbus Investment Deals</h1>
@@ -319,12 +449,19 @@
       </div>
     </section>
 
-    <div id="app" class="loading">Loading your live Columbus deals...</div>
+    <div id="app" class="loading">
+      Waking up your live deals feed... this can take up to 60 seconds on the free server plan.
+      <br /><br />
+      <button class="wake-btn" onclick="loadDeals()">Try again</button>
+    </div>
+
     <div class="footer-note">Powered by your live Render API.</div>
   </div>
 
   <script>
     const API_URL = "https://columbus-deals.onrender.com/api/deals";
+    const LEADS_URL = "https://columbus-deals.onrender.com/api/leads";
+
     let allDeals = [];
     let payload = null;
 
@@ -334,10 +471,17 @@
     const sortEl = document.getElementById('sort');
     const maxPriceEl = document.getElementById('maxPrice');
     const searchEl = document.getElementById('search');
+    const gate = document.getElementById('gate');
+    const siteWrap = document.getElementById('siteWrap');
+    const leadForm = document.getElementById('leadForm');
 
     function money(value) {
       if (value === null || value === undefined || value === '') return '—';
-      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+      }).format(value);
     }
 
     function percent(value) {
@@ -357,7 +501,8 @@
 
     function populateCategories(deals) {
       const categories = [...new Set(deals.map(d => d.category).filter(Boolean))];
-      categoryEl.innerHTML = '<option value="all">All categories</option>' +
+      categoryEl.innerHTML =
+        '<option value="all">All categories</option>' +
         categories.map(c => `<option value="${c}">${c}</option>`).join('');
     }
 
@@ -397,7 +542,10 @@
 
       app.className = 'grid';
       app.innerHTML = deals.map(deal => {
-        const details = Object.entries(deal.details || {}).map(([k, v]) => `<span class="detail">${k}: ${v}</span>`).join('');
+        const details = Object.entries(deal.details || {})
+          .map(([k, v]) => `<span class="detail">${k}: ${v}</span>`)
+          .join('');
+
         return `
           <article class="card">
             <div class="pill-row">
@@ -423,10 +571,18 @@
       }).join('');
     }
 
-    async function init() {
+    async function loadDeals() {
+      app.className = 'loading';
+      app.innerHTML = `
+        Waking up your live deals feed... this can take up to 60 seconds on the free server plan.
+        <br /><br />
+        <button class="wake-btn" onclick="loadDeals()">Try again</button>
+      `;
+
       try {
-        const res = await fetch(API_URL);
+        const res = await fetch(API_URL, { cache: 'no-store' });
         if (!res.ok) throw new Error('Could not load deals');
+
         payload = await res.json();
         allDeals = payload.deals || [];
         renderStats(payload);
@@ -434,16 +590,58 @@
         renderDeals();
       } catch (err) {
         app.className = 'error';
-        app.innerHTML = 'Your deals feed loaded incorrectly. Double-check the Render API URL and try again.';
+        app.innerHTML = 'The deals feed is still waking up or the API needs a quick retry. Wait a few seconds and click “Try again.”';
       }
     }
+
+    function unlockSite() {
+      gate.classList.add('hidden');
+      siteWrap.classList.remove('hidden');
+      loadDeals();
+    }
+
+    leadForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const lead = {
+        name: document.getElementById('leadName').value.trim(),
+        phone: document.getElementById('leadPhone').value.trim(),
+        email: document.getElementById('leadEmail').value.trim(),
+      };
+
+      try {
+        const res = await fetch(LEADS_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(lead)
+        });
+
+        if (!res.ok) {
+          throw new Error('Lead save failed');
+        }
+
+        localStorage.setItem('columbusDealsLead', JSON.stringify({
+          ...lead,
+          unlockedAt: new Date().toISOString()
+        }));
+
+        unlockSite();
+      } catch (err) {
+        alert('There was a problem saving your info. Please try again.');
+      }
+    });
 
     [categoryEl, sortEl, maxPriceEl, searchEl].forEach(el => {
       el.addEventListener('input', renderDeals);
       el.addEventListener('change', renderDeals);
     });
 
-    init();
+    const savedLead = localStorage.getItem('columbusDealsLead');
+    if (savedLead) {
+      unlockSite();
+    }
   </script>
 </body>
 </html>
