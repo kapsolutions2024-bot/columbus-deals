@@ -21,6 +21,7 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3001;
 const DEALS_FILE = path.join(__dirname, "deals.json");
+const LEADS_FILE = path.join(__dirname, "leads.json");
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
 if (!ANTHROPIC_API_KEY) {
@@ -45,7 +46,18 @@ function loadDeals() {
 function saveDeals(data) {
   fs.writeFileSync(DEALS_FILE, JSON.stringify(data, null, 2));
 }
+function loadLeads() {
+  if (!fs.existsSync(LEADS_FILE)) return [];
+  try {
+    return JSON.parse(fs.readFileSync(LEADS_FILE, "utf8"));
+  } catch {
+    return [];
+  }
+}
 
+function saveLeads(data) {
+  fs.writeFileSync(LEADS_FILE, JSON.stringify(data, null, 2));
+}
 // ─── Claude AI Deal Fetcher ───────────────────────────────────────────────────
 
 async function fetchDealsFromClaude() {
@@ -188,7 +200,34 @@ cron.schedule("0 7 * * 1", async () => {
 }, {
   timezone: "America/New_York"
 });
+// POST /api/leads — save a lead from the unlock form
+app.post("/api/leads", (req, res) => {
+  const { name, phone, email } = req.body;
 
+  if (!name || !phone || !email) {
+    return res.status(400).json({ error: "Name, phone, and email are required." });
+  }
+
+  const leads = loadLeads();
+
+  const newLead = {
+    id: Date.now(),
+    name: name.trim(),
+    phone: phone.trim(),
+    email: email.trim(),
+    createdAt: new Date().toISOString(),
+  };
+
+  leads.push(newLead);
+  saveLeads(leads);
+
+  res.json({ success: true });
+});
+
+// GET /api/leads — view saved leads
+app.get("/api/leads", (req, res) => {
+  res.json(loadLeads());
+});
 // ─── Start ────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`\n Columbus Deals API running on http://localhost:${PORT}`);
